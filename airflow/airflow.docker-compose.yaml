@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+  airflow:
+    build:
+      context: .
+      dockerfile: airflow.Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW_DATABASE_CONNECTION_URI: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW_EXECUTOR: LocalExecutor
+      AIRFLOW_LOAD_EXAMPLES: 'n'
+      AIRFLOW_WEBSERVER_PORT: 8888
+    ports:
+      - "8888:8888"
